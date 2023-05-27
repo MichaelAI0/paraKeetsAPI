@@ -29,4 +29,37 @@ class User < ApplicationRecord
            foreign_key: "following_id",
            dependent: :destroy
   has_many :followers, through: :follows_as_following, source: :follower
+
+  def name
+    "#{first_name} #{last_name}"
+  end
+  # Methods to be called by tweets, retweets, follows, etc.. controllers
+
+  def like(tweet)
+    likes.create(tweet: tweet)
+  end
+
+  def unlike(tweet)
+    likes.find_by(tweet: tweet).destroy
+  end
+
+  def retweet(tweet)
+    retweets.create(tweet: tweet)
+  end
+
+  def unretweet(tweet)
+    retweets.find_by(tweet: tweet).destroy
+  end
+
+  def follow(user)
+    follows.create(following: user)
+  end
+
+  def unfollow(user)
+    follows.find_by(following: user).destroy
+  end
+
+  def following?(user)
+    followings.exists?(user.id)
+  end
 end
